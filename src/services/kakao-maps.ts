@@ -44,6 +44,9 @@ declare global {
   interface Window { kakao?: { maps: KakaoMaps } }
 }
 
+export const KAKAO_MAP_API_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_CLIENT_KEY?.trim()
+  || process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY?.trim();
+
 let sdkPromise: Promise<KakaoMaps> | undefined;
 
 export function loadKakaoMaps(key: string): Promise<KakaoMaps> {
@@ -133,3 +136,27 @@ export async function findOfficeLocation(maps: KakaoMaps, query: string): Promis
   });
 }
 
+
+export function createRestaurantPin(label: string, ariaLabel: string, onSelect: () => void): HTMLElement {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'restaurant-map-pin';
+  button.textContent = label;
+  button.setAttribute('aria-label', ariaLabel);
+  button.onclick = onSelect;
+  return button;
+}
+
+export function createOfficePin(title: string): HTMLElement {
+  const label = document.createElement('div');
+  label.className = 'restaurant-map-pin office-map-pin';
+  label.textContent = '🏢 우리 사무실';
+  label.title = title;
+  return label;
+}
+
+export function observeResize(element: Element, onResize: () => void): () => void {
+  const observer = new ResizeObserver(onResize);
+  observer.observe(element);
+  return () => observer.disconnect();
+}

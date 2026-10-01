@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { findOfficeLocation, geocodeAddress, kakaoSearchUrl, KakaoMaps, OfficePlace } from '../lib/kakao-maps';
+import { findOfficeLocation, geocodeAddress, kakaoSearchUrl, KakaoMaps, OfficePlace } from '../services/kakao-maps';
 
 test('geocoding shares requests, converts x/y correctly, and retries failed addresses', async () => {
   let requests = 0;

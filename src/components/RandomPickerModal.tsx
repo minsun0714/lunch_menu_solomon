@@ -1,8 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import { MapPinIcon, SparklesIcon } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useRandomPicker } from '@/hooks/use-random-picker';
+import { cn } from '@/lib/utils';
 import { Restaurant } from '@/types/restaurant';
-import { SparklesIcon, CloseIcon, MapPinIcon } from './Icons';
 import StarRating from './StarRating';
 
 interface RandomPickerModalProps {
@@ -17,130 +21,60 @@ export default function RandomPickerModal(props: RandomPickerModalProps) {
   return <RandomPickerModalContent {...props} />;
 }
 
-function RandomPickerModalContent({
-  onClose,
-  restaurants,
-  onSelectRestaurant,
-}: RandomPickerModalProps) {
-  const [selected, setSelected] = useState<Restaurant | null>(() => {
-    if (restaurants.length === 0) return null;
-    return restaurants[Math.floor(Math.random() * restaurants.length)];
-  });
-  const [isSpinning, setIsSpinning] = useState(false);
-
-  const spin = () => {
-    if (restaurants.length === 0) return;
-    setIsSpinning(true);
-
-    let counter = 0;
-    const totalFlips = 16;
-    const interval = setInterval(() => {
-      const randomIndex = Math.floor(Math.random() * restaurants.length);
-      setSelected(restaurants[randomIndex]);
-      counter++;
-
-      if (counter >= totalFlips) {
-        clearInterval(interval);
-        setIsSpinning(false);
-      }
-    }, 90);
-  };
+function RandomPickerModalContent({ onClose, restaurants, onSelectRestaurant }: RandomPickerModalProps) {
+  const { selected, isSpinning, spin } = useRandomPicker(restaurants);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl relative overflow-hidden">
-        {/* Close Button */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-        >
-          <CloseIcon className="w-5 h-5" />
-        </button>
-
-        {/* Title */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 mb-2">
-            <SparklesIcon className="w-6 h-6 animate-pulse" />
+    <Dialog open onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="rounded-3xl p-6 sm:max-w-md">
+        <DialogHeader className="items-center text-center">
+          <div className="mb-2 inline-flex size-12 items-center justify-center rounded-2xl bg-orange-100 text-orange-600">
+            <SparklesIcon className="size-6 animate-pulse" />
           </div>
-          <h3 className="text-xl font-black text-slate-900">오늘의 점심 메뉴 추천!</h3>
-          <p className="text-xs text-slate-500 mt-1">
-            솔로몬의 지혜로 오늘 갈 점심 식당을 골라드립니다
-          </p>
-        </div>
+          <DialogTitle className="text-xl font-black text-slate-900">오늘의 점심 메뉴 추천!</DialogTitle>
+          <DialogDescription className="text-xs">솔로몬의 지혜로 오늘 갈 점심 식당을 골라드립니다</DialogDescription>
+        </DialogHeader>
 
-        {/* Picked Restaurant Card */}
         {restaurants.length === 0 ? (
-          <div className="text-center py-8 text-slate-500">
-            등록된 식당이 없습니다. 식당을 먼저 등록해주세요!
-          </div>
+          <div className="py-8 text-center text-muted-foreground">등록된 식당이 없습니다. 식당을 먼저 등록해주세요!</div>
         ) : selected ? (
-          <div
-            className={`p-5 rounded-2xl border transition-all duration-200 ${
-              isSpinning
-                ? 'bg-orange-50/50 border-orange-200 scale-95 opacity-80'
-                : 'bg-white border-orange-200 shadow-md ring-2 ring-orange-500/20'
-            }`}
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-800">
-                {selected.category}
-              </span>
-              {selected.priceRange && (
-                <span className="text-xs text-slate-500">{selected.priceRange}</span>
-              )}
+          <div className={cn('rounded-2xl border p-5 transition-all duration-200', isSpinning ? 'scale-95 border-orange-200 bg-orange-50/50 opacity-80' : 'border-orange-200 bg-card shadow-md ring-2 ring-orange-500/20')}>
+            <div className="mb-2 flex items-center gap-2">
+              <Badge className="bg-orange-100 font-bold text-orange-800">{selected.category}</Badge>
+              {selected.priceRange && <span className="text-xs text-muted-foreground">{selected.priceRange}</span>}
             </div>
-
-            <h4 className="text-xl font-bold text-slate-900 mb-1">
-              {selected.name}
-            </h4>
-
-            <div className="flex items-center gap-2 mb-3">
+            <h4 className="mb-1 text-xl font-bold text-slate-900">{selected.name}</h4>
+            <div className="mb-3 flex items-center gap-2">
               <StarRating rating={selected.averageRating} size="sm" />
-              <span className="text-xs font-bold text-slate-700">
-                {selected.averageRating > 0 ? selected.averageRating.toFixed(1) : '0.0'}
-              </span>
-              <span className="text-xs text-slate-400">
-                ({selected.reviewCount}개 리뷰)
-              </span>
+              <span className="text-xs font-bold text-slate-700">{selected.averageRating > 0 ? selected.averageRating.toFixed(1) : '0.0'}</span>
+              <span className="text-xs text-slate-400">({selected.reviewCount}개 리뷰)</span>
             </div>
-
-            <p className="text-xs text-slate-600 line-clamp-2 mb-3 bg-slate-50 p-2.5 rounded-xl">
-              {selected.description}
-            </p>
-
-            <div className="flex items-center gap-1.5 text-xs text-slate-500">
-              <MapPinIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <p className="mb-3 line-clamp-2 rounded-xl bg-muted/60 p-2.5 text-xs text-slate-600">{selected.description}</p>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <MapPinIcon className="size-3.5 shrink-0 text-slate-400" />
               <span className="truncate">{selected.address}</span>
             </div>
           </div>
         ) : null}
 
-        {/* Action Buttons */}
-        <div className="mt-6 flex items-center gap-3">
-          <button
-            type="button"
-            onClick={spin}
-            disabled={isSpinning || restaurants.length <= 1}
-            className="flex-1 py-3 px-4 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors disabled:opacity-50 cursor-pointer"
-          >
+        <div className="mt-2 flex items-center gap-3">
+          <Button type="button" variant="secondary" onClick={spin} disabled={isSpinning || restaurants.length <= 1} className="h-11 flex-1 font-bold">
             {isSpinning ? '고르는 중...' : '다시 추천받기'}
-          </button>
-
+          </Button>
           {selected && !isSpinning && (
-            <button
+            <Button
               type="button"
               onClick={() => {
                 onClose();
                 onSelectRestaurant(selected);
               }}
-              className="flex-1 py-3 px-4 rounded-xl text-sm font-bold bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:from-orange-600 hover:to-amber-600 transition-all shadow-md shadow-orange-500/20 cursor-pointer"
+              className="h-11 flex-1 bg-gradient-to-r from-orange-500 to-amber-500 font-bold text-white shadow-md shadow-orange-500/20 hover:from-orange-600 hover:to-amber-600"
             >
               식당 상세 보기
-            </button>
+            </Button>
           )}
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

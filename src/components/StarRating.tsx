@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useId, useState } from 'react';
-import { StarIcon } from './Icons';
+import { useId, useState } from 'react';
+import { StarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface StarRatingProps {
   rating: number; // 0 to 5
@@ -21,6 +22,8 @@ const RATING_LABELS: Record<number, string> = {
   5: '5점 - 최고예요!',
 };
 
+const SIZE_CLASSES = { sm: 'size-4', md: 'size-5', lg: 'size-7' };
+
 export default function StarRating({
   rating,
   maxRating = 5,
@@ -35,25 +38,19 @@ export default function StarRating({
 
   const activeRating = hoverRating !== null ? hoverRating : rating;
 
-  const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-5 h-5',
-    lg: 'w-7 h-7',
-  };
-
   return (
-    <div className="inline-flex items-center gap-1.5 flex-wrap">
+    <div className="inline-flex flex-wrap items-center gap-1.5">
       <div className="flex items-center" role={interactive ? 'radiogroup' : 'img'} aria-label={interactive ? '별점 선택 (0.5점 단위)' : `${rating.toFixed(1)}점 / ${maxRating}점`}>
         {Array.from({ length: maxRating }, (_, i) => {
           const starValue = i + 1;
           const fill = Math.max(0, Math.min(1, activeRating - i)) * 100;
 
           return (
-            <span key={starValue} className={`relative inline-flex ${interactive ? 'p-1' : 'p-0.5'}`}>
+            <span key={starValue} className={cn('relative inline-flex', interactive ? 'p-1' : 'p-0.5')}>
               <span className="relative inline-flex" aria-hidden="true">
-                <StarIcon filled className={`${sizeClasses[size]} text-slate-200 fill-slate-200`} />
+                <StarIcon strokeWidth={0} className={cn(SIZE_CLASSES[size], 'fill-slate-200 text-slate-200')} />
                 <span className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - fill}% 0 0)` }}>
-                  <StarIcon filled className={`${sizeClasses[size]} text-amber-400 fill-amber-400`} />
+                  <StarIcon strokeWidth={0} className={cn(SIZE_CLASSES[size], 'fill-amber-400 text-amber-400')} />
                 </span>
               </span>
               {interactive && [starValue - 0.5, starValue].map((value, half) => (
@@ -62,7 +59,7 @@ export default function StarRating({
                   onChange={() => onChange?.(value)}
                   onMouseEnter={() => setHoverRating(value)} onMouseLeave={() => setHoverRating(null)}
                   onFocus={() => setHoverRating(value)} onBlur={() => setHoverRating(null)}
-                  className={`absolute top-0 h-full w-1/2 appearance-none cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-orange-600 ${half === 0 ? 'left-0' : 'right-0'}`} />
+                  className={cn('absolute top-0 h-full w-1/2 cursor-pointer appearance-none rounded-sm focus-visible:outline-2 focus-visible:outline-primary', half === 0 ? 'left-0' : 'right-0')} />
               ))}
             </span>
           );
@@ -70,13 +67,13 @@ export default function StarRating({
       </div>
 
       {showNumber && (
-        <span className="font-semibold text-slate-700 text-sm ml-0.5">
+        <span className="ml-0.5 text-sm font-semibold text-slate-700">
           {rating > 0 ? rating.toFixed(1) : '평가 없음'}
         </span>
       )}
 
       {showLabel && activeRating > 0 && (
-        <span className="text-sm font-medium text-amber-600 ml-1">
+        <span className="ml-1 text-sm font-medium text-amber-600">
           {RATING_LABELS[activeRating] || `${activeRating}점`}
         </span>
       )}

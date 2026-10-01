@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
-import { Restaurant, CreateRestaurantInput, UpdateRestaurantInput, CreateReviewInput, Review } from '../types/restaurant';
-import { isValidRating } from '../types/rating';
-import { getSupabase } from './supabase';
+import { Restaurant, CreateRestaurantInput, UpdateRestaurantInput, CreateReviewInput, Review } from '@/types/restaurant';
+import { isValidRating } from '@/types/rating';
+import { getSupabase } from '@/server/db/supabase';
 
 interface ReviewRow {
   id: string; restaurant_id: string; author: string; rating: number; content: string; created_at: string;

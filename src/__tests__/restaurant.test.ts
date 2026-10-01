@@ -9,7 +9,7 @@ import {
   deleteRestaurant,
   addReview,
   deleteReview,
-} from '../lib/storage';
+} from '../server/repositories/restaurant-repository';
 
 test('Restaurant CRUD and Review operations', async (t) => {
   installSupabaseMock(t);
