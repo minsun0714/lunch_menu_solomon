@@ -1,0 +1,191 @@
+[
+  {
+    "id": "rest-1",
+    "name": "솔로몬 묵은지 김치찌개",
+    "category": "한식",
+    "address": "서울시 강남구 테헤란로 12길 15",
+    "phone": "02-555-1234",
+    "description": "3년 숙성 묵은지와 두툼한 생돼지고기가 듬뿍 들어간 깊은 맛의 김치찌개 전문점. 라면사리 무한리필!",
+    "imageUrl": "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=800&auto=format&fit=crop&q=80",
+    "priceRange": "1만원 이하",
+    "openingHours": "11:00 - 21:30 (일요일 휴무)",
+    "averageRating": 4.8,
+    "reviewCount": 3,
+    "createdAt": "2026-09-15T03:00:00.000Z",
+    "updatedAt": "2026-09-15T03:00:00.000Z",
+    "reviews": [
+      {
+        "id": "rev-1-1",
+        "restaurantId": "rest-1",
+        "author": "점심탐험가",
+        "rating": 5,
+        "content": "국물이 진짜 진하고 고기 양이 어마어마해요. 점심시간에 든든하게 한 끼 먹기 최고입니다.",
+        "createdAt": "2026-09-16T04:12:00.000Z"
+      },
+      {
+        "id": "rev-1-2",
+        "restaurantId": "rest-1",
+        "author": "김치러버",
+        "rating": 5,
+        "content": "묵은지의 깊은 감칠맛이 살아있습니다. 계란말이도 꼭 추가해서 드세요!",
+        "createdAt": "2026-09-20T03:30:00.000Z"
+      },
+      {
+        "id": "rev-1-3",
+        "restaurantId": "rest-1",
+        "author": "프로직장인",
+        "rating": 4,
+        "content": "웨이팅이 조금 있지만 회전율이 빨라서 10분 만에 들어갔어요. 밥 두 공기 뚝딱.",
+        "createdAt": "2026-09-25T03:45:00.000Z"
+      }
+    ]
+  },
+  {
+    "id": "rest-2",
+    "name": "도산 카츠 카츠야",
+    "category": "일식",
+    "address": "서울시 강남구 압구정로 46길 28",
+    "phone": "02-512-8899",
+    "description": "저온 숙성 제주 흑돼지로 만든 겉바속촉 프리미엄 히레카츠 & 로스카츠. 특제 트러플 소금 제공.",
+    "imageUrl": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&auto=format&fit=crop&q=80",
+    "priceRange": "1만~1.5만원",
+    "openingHours": "11:30 - 21:00 (브레이크타임 15:00-17:00)",
+    "averageRating": 4.7,
+    "reviewCount": 3,
+    "createdAt": "2026-09-18T05:00:00.000Z",
+    "updatedAt": "2026-09-18T05:00:00.000Z",
+    "reviews": [
+      {
+        "id": "rev-2-1",
+        "restaurantId": "rest-2",
+        "author": "돈카츠마니아",
+        "rating": 5,
+        "content": "안심(히레)카츠 육즙이 입 안 가득 퍼집니다. 와사비랑 트러플 소금 찍어먹으면 천국!",
+        "createdAt": "2026-09-19T03:20:00.000Z"
+      },
+      {
+        "id": "rev-2-2",
+        "restaurantId": "rest-2",
+        "author": "바삭이",
+        "rating": 4,
+        "content": "튀김옷이 바삭하고 기름지지 않아서 깔끔해요. 샐러드 드레싱도 상큼합니다.",
+        "createdAt": "2026-09-22T04:15:00.000Z"
+      },
+      {
+        "id": "rev-2-3",
+        "restaurantId": "rest-2",
+        "author": "미식솔로몬",
+        "rating": 5,
+        "content": "팀 점심 회식으로 다녀왔는데 다들 대만족했습니다. 재방문 의사 100%",
+        "createdAt": "2026-09-28T03:10:00.000Z"
+      }
+    ]
+  },
+  {
+    "id": "rest-3",
+    "name": "화룡 불맛 짬뽕관",
+    "category": "중식",
+    "address": "서울시 서초구 서초대로 77길 19",
+    "phone": "02-535-7766",
+    "description": "주문 즉시 볶아내는 강력한 불맛 해물짬뽕과 바삭 쫀득한 찹쌀 탕수육. 해장에 제격!",
+    "imageUrl": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&auto=format&fit=crop&q=80",
+    "priceRange": "1만원 이하",
+    "openingHours": "10:30 - 22:00",
+    "averageRating": 4.3,
+    "reviewCount": 3,
+    "createdAt": "2026-09-20T02:00:00.000Z",
+    "updatedAt": "2026-09-20T02:00:00.000Z",
+    "reviews": [
+      {
+        "id": "rev-3-1",
+        "restaurantId": "rest-3",
+        "author": "해장원정대",
+        "rating": 5,
+        "content": "전날 회식하고 점심에 갔는데 국물 한 모금에 속이 확 풀렸습니다. 불맛 대박.",
+        "createdAt": "2026-09-21T03:50:00.000Z"
+      },
+      {
+        "id": "rev-3-2",
+        "restaurantId": "rest-3",
+        "author": "탕수육러버",
+        "rating": 4,
+        "content": "찹쌀 탕수육이 바삭하고 소스가 과하게 달지 않아 짬뽕이랑 밸런스가 좋아요.",
+        "createdAt": "2026-09-24T04:22:00.000Z"
+      },
+      {
+        "id": "rev-3-3",
+        "restaurantId": "rest-3",
+        "author": "맵찔이",
+        "rating": 4,
+        "content": "조금 맵긴 하지만 맛있게 매워서 자꾸 젓가락이 갑니다. 단무지 셀프바 편리해요.",
+        "createdAt": "2026-09-29T03:40:00.000Z"
+      }
+    ]
+  },
+  {
+    "id": "rest-4",
+    "name": "바질 & 비스트로",
+    "category": "양식",
+    "address": "서울시 강남구 역삼로 25길 8",
+    "phone": "02-567-3344",
+    "description": "생면 파스타와 화덕 피자가 맛있는 감성 비스트로. 수제 바질페스토 파스타 추천!",
+    "imageUrl": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800&auto=format&fit=crop&q=80",
+    "priceRange": "1.5만~2만원",
+    "openingHours": "11:30 - 21:30 (월요일 휴무)",
+    "averageRating": 4.6,
+    "reviewCount": 2,
+    "createdAt": "2026-09-22T04:00:00.000Z",
+    "updatedAt": "2026-09-22T04:00:00.000Z",
+    "reviews": [
+      {
+        "id": "rev-4-1",
+        "restaurantId": "rest-4",
+        "author": "파스타요정",
+        "rating": 5,
+        "content": "생면이라 식감이 남다릅니다. 바질페스토 향이 너무 신선하고 은은해요.",
+        "createdAt": "2026-09-23T04:05:00.000Z"
+      },
+      {
+        "id": "rev-4-2",
+        "restaurantId": "rest-4",
+        "author": "데이트마스터",
+        "rating": 4,
+        "content": "분위기가 따뜻하고 정갈해서 특별한 점심 약속이나 청첩장 모임에 좋아요.",
+        "createdAt": "2026-09-27T05:30:00.000Z"
+      }
+    ]
+  },
+  {
+    "id": "rest-5",
+    "name": "골목집 떡볶이 & 수제튀김",
+    "category": "분식",
+    "address": "서울시 강남구 역삼로 14길 11",
+    "phone": "02-543-9080",
+    "description": "매콤달콤 추억의 쌀떡볶이와 바삭한 모둠 수제튀김, 통통한 참치김밥 세트.",
+    "imageUrl": "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800&auto=format&fit=crop&q=80",
+    "priceRange": "1만원 이하",
+    "openingHours": "10:00 - 20:30",
+    "averageRating": 4.5,
+    "reviewCount": 2,
+    "createdAt": "2026-09-24T01:00:00.000Z",
+    "updatedAt": "2026-09-24T01:00:00.000Z",
+    "reviews": [
+      {
+        "id": "rev-5-1",
+        "restaurantId": "rest-5",
+        "author": "떡볶이덕후",
+        "rating": 5,
+        "content": "가성비 최강 점심! 떡볶이 국물에 김말이랑 참치김밥 찍어먹으면 환상입니다.",
+        "createdAt": "2026-09-26T03:15:00.000Z"
+      },
+      {
+        "id": "rev-5-2",
+        "restaurantId": "rest-5",
+        "author": "분식러버",
+        "rating": 4,
+        "content": "사장님도 친절하시고 양도 푸짐해요. 가볍게 분식 땡길 때 1순위.",
+        "createdAt": "2026-09-30T04:00:00.000Z"
+      }
+    ]
+  }
+]
