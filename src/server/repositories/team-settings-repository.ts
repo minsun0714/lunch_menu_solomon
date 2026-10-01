@@ -1,5 +1,5 @@
-import { DEFAULT_TEAM_SETTINGS, parseTeamSettings, TeamSettings } from '../types/team-settings';
-import { getSupabase } from './supabase';
+import { DEFAULT_TEAM_SETTINGS, parseTeamSettings, TeamSettings } from '@/types/team-settings';
+import { getSupabase } from '@/server/db/supabase';
 
 export async function getTeamSettings(): Promise<TeamSettings> {
   const { data, error } = await getSupabase().from('team_settings').select('*').eq('id', true).maybeSingle();

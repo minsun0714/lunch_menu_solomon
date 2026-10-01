@@ -5,7 +5,7 @@
 ## 기술 스택
 - **Framework**: Next.js (App Router)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS + shadcn/ui (Radix primitives, lucide icons, Sonner toasts)
 - **Features**:
   - 식당 CRUD (등록, 조회, 수정, 삭제)
   - 식당별 별점, 작성자 이름, 리뷰 자유 작성 및 관리 (로그인 불필요)
@@ -14,6 +14,16 @@
   - 카카오 지도와 식당 목록에 동일한 검색·카테고리 필터 적용
   - 지도에서 식당 선택 시 상세 정보 및 팀 리뷰 표시
   - `/settings`에서 팀 이름과 사무실 주소 설정
+
+## 코드 구조
+
+자세한 규칙은 [SKILLS.md](./SKILLS.md)를 참고하세요.
+
+- `src/components/ui` — shadcn/ui 컴포넌트, `src/components` — 화면 컴포넌트
+- `src/hooks` — 페이지·컴포넌트 로직을 담은 커스텀 훅
+- `src/services` — 브라우저 API(fetch, 카카오 지도 SDK, 알림) 호출 계층
+- `src/server` — 서버 전용 로직 (`services` 비즈니스 규칙, `repositories` 데이터 접근, `db` 클라이언트)
+- `src/app/api` — 요청/응답 변환만 하는 얇은 라우트 핸들러
 
 ## 실행 방법
 ```bash

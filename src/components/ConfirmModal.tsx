@@ -1,7 +1,17 @@
 'use client';
 
-import React from 'react';
-import { TrashIcon, CloseIcon } from './Icons';
+import { Trash2Icon } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { cn } from '@/lib/utils';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -10,7 +20,7 @@ interface ConfirmModalProps {
   confirmText?: string;
   cancelText?: string;
   isDangerous?: boolean;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
   onCancel: () => void;
 }
 
@@ -27,53 +37,31 @@ export default function ConfirmModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
-        <div className="flex items-start justify-between mb-4">
+    <AlertDialog open onOpenChange={(open) => { if (!open) onCancel(); }}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
           <div className="flex items-center gap-3">
-            <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                isDangerous ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'
-              }`}
-            >
-              <TrashIcon className="w-5 h-5" />
+            <div className={cn('flex size-10 items-center justify-center rounded-xl', isDangerous ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600')}>
+              <Trash2Icon className="size-5" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+            <AlertDialogTitle>{title}</AlertDialogTitle>
           </div>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
-          >
-            <CloseIcon className="w-5 h-5" />
-          </button>
-        </div>
-
-        <p className="text-sm text-slate-600 leading-relaxed mb-6 whitespace-pre-line">
-          {message}
-        </p>
-
-        <div className="flex items-center justify-end gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-          >
-            {cancelText}
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className={`px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors shadow-xs cursor-pointer ${
-              isDangerous
-                ? 'bg-red-600 hover:bg-red-700 shadow-red-600/20'
-                : 'bg-orange-600 hover:bg-orange-700 shadow-orange-600/20'
-            }`}
+          <AlertDialogDescription className="whitespace-pre-line leading-relaxed">{message}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{cancelText}</AlertDialogCancel>
+          <AlertDialogAction
+            variant={isDangerous ? 'destructive' : 'default'}
+            onClick={(event) => {
+              // Stay open until the caller finishes; the caller closes it by clearing its state.
+              event.preventDefault();
+              void onConfirm();
+            }}
           >
             {confirmText}
-          </button>
-        </div>
-      </div>
-    </div>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
