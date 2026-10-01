@@ -87,27 +87,27 @@ export default function RestaurantCard({
     <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col group">
       {/* Top Banner / Image */}
       <div className="relative h-44 w-full overflow-hidden bg-slate-100">
+        {/* Fallback decorative background if no image or image load fails */}
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${categoryStyle.banner} flex items-center justify-center p-4`}
+        >
+          <span className="text-white/80 font-bold text-2xl tracking-wider">
+            {restaurant.category}
+          </span>
+        </div>
+
         {restaurant.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={restaurant.imageUrl}
             alt={restaurant.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="relative w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={(e) => {
               // Hide image on error and fallback to gradient
               (e.currentTarget as HTMLElement).style.display = 'none';
             }}
           />
         ) : null}
-
-        {/* Fallback decorative background if no image */}
-        <div
-          className={`absolute inset-0 bg-gradient-to-br ${categoryStyle.banner} opacity-90 -z-10 flex items-center justify-center p-4`}
-        >
-          <span className="text-white/80 font-bold text-2xl tracking-wider">
-            {restaurant.category}
-          </span>
-        </div>
 
         {/* Category & Price Badge overlay */}
         <div className="absolute top-3 left-3 flex gap-1.5 flex-wrap">

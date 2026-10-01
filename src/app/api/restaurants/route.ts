@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllRestaurants, createRestaurant } from '@/lib/storage';
-import { CreateRestaurantInput, RestaurantCategory } from '@/types/restaurant';
+import { CreateRestaurantInput, RestaurantCategory, RESTAURANT_CATEGORIES } from '@/types/restaurant';
 
 export async function GET(request: NextRequest) {
   try {
@@ -60,9 +60,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!category || typeof category !== 'string') {
+    if (!category || typeof category !== 'string' || !RESTAURANT_CATEGORIES.includes(category as RestaurantCategory)) {
       return NextResponse.json(
-        { success: false, error: '카테고리를 선택해주세요.' },
+        { success: false, error: '유효한 카테고리를 선택해주세요.' },
         { status: 400 }
       );
     }

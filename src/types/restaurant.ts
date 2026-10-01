@@ -1,12 +1,15 @@
-export type RestaurantCategory =
-  | '한식'
-  | '일식'
-  | '중식'
-  | '양식'
-  | '분식'
-  | '아시안'
-  | '카페/디저트'
-  | '기타';
+export const RESTAURANT_CATEGORIES = [
+  '한식',
+  '일식',
+  '중식',
+  '양식',
+  '분식',
+  '아시안',
+  '카페/디저트',
+  '기타',
+] as const;
+
+export type RestaurantCategory = (typeof RESTAURANT_CATEGORIES)[number];
 
 export interface Review {
   id: string;

@@ -69,11 +69,11 @@ function RestaurantModalForm({
         name: name.trim(),
         category,
         address: address.trim(),
-        phone: phone.trim() || undefined,
+        phone: phone.trim(),
         description: description.trim(),
-        imageUrl: imageUrl.trim() || undefined,
-        priceRange: priceRange.trim() || undefined,
-        openingHours: openingHours.trim() || undefined,
+        imageUrl: imageUrl.trim(),
+        priceRange: priceRange.trim(),
+        openingHours: openingHours.trim(),
       });
       onClose();
     } catch (error) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getRestaurantById, updateRestaurant, deleteRestaurant } from '@/lib/storage';
-import { UpdateRestaurantInput, RestaurantCategory } from '@/types/restaurant';
+import { UpdateRestaurantInput, RestaurantCategory, RESTAURANT_CATEGORIES } from '@/types/restaurant';
 
 export async function GET(
   request: NextRequest,
@@ -36,14 +36,59 @@ export async function PUT(
     const body = await request.json();
 
     const updateData: UpdateRestaurantInput = {};
-    if (body.name !== undefined) updateData.name = body.name;
-    if (body.category !== undefined) updateData.category = body.category as RestaurantCategory;
-    if (body.address !== undefined) updateData.address = body.address;
-    if (body.phone !== undefined) updateData.phone = body.phone;
-    if (body.description !== undefined) updateData.description = body.description;
-    if (body.imageUrl !== undefined) updateData.imageUrl = body.imageUrl;
-    if (body.priceRange !== undefined) updateData.priceRange = body.priceRange;
-    if (body.openingHours !== undefined) updateData.openingHours = body.openingHours;
+
+    if (body.name !== undefined) {
+      if (typeof body.name !== 'string' || !body.name.trim()) {
+        return NextResponse.json(
+          { success: false, error: '식당 이름은 비어있을 수 없습니다.' },
+          { status: 400 }
+        );
+      }
+      updateData.name = body.name.trim();
+    }
+
+    if (body.category !== undefined) {
+      if (typeof body.category !== 'string' || !RESTAURANT_CATEGORIES.includes(body.category as RestaurantCategory)) {
+        return NextResponse.json(
+          { success: false, error: '유효한 카테고리를 선택해주세요.' },
+          { status: 400 }
+        );
+      }
+      updateData.category = body.category as RestaurantCategory;
+    }
+
+    if (body.address !== undefined) {
+      if (typeof body.address !== 'string' || !body.address.trim()) {
+        return NextResponse.json(
+          { success: false, error: '식당 위치/주소는 비어있을 수 없습니다.' },
+          { status: 400 }
+        );
+      }
+      updateData.address = body.address.trim();
+    }
+
+    if (body.description !== undefined) {
+      if (typeof body.description !== 'string' || !body.description.trim()) {
+        return NextResponse.json(
+          { success: false, error: '식당 설명은 비어있을 수 없습니다.' },
+          { status: 400 }
+        );
+      }
+      updateData.description = body.description.trim();
+    }
+
+    if (body.phone !== undefined) {
+      updateData.phone = typeof body.phone === 'string' ? body.phone.trim() : '';
+    }
+    if (body.imageUrl !== undefined) {
+      updateData.imageUrl = typeof body.imageUrl === 'string' ? body.imageUrl.trim() : '';
+    }
+    if (body.priceRange !== undefined) {
+      updateData.priceRange = typeof body.priceRange === 'string' ? body.priceRange.trim() : '';
+    }
+    if (body.openingHours !== undefined) {
+      updateData.openingHours = typeof body.openingHours === 'string' ? body.openingHours.trim() : '';
+    }
 
     const updated = await updateRestaurant(id, updateData);
     if (!updated) {

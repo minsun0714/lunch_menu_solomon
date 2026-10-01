@@ -15,7 +15,7 @@ async function ensureDataFile(): Promise<Restaurant[]> {
   try {
     const data = await fs.readFile(DATA_FILE_PATH, 'utf-8');
     const parsed = JSON.parse(data) as Restaurant[];
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    if (Array.isArray(parsed)) {
       return parsed;
     }
   } catch {
