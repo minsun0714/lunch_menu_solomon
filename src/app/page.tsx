@@ -8,12 +8,13 @@ import {
   CreateReviewInput,
 } from '@/types/restaurant';
 import Navbar from '@/components/Navbar';
-import RestaurantCard from '@/components/RestaurantCard';
+import RestaurantExplorer from '@/components/RestaurantExplorer';
+import { DEFAULT_TEAM_SETTINGS, TeamSettings } from '@/types/team-settings';
 import RestaurantModal from '@/components/RestaurantModal';
 import RestaurantDetailModal from '@/components/RestaurantDetailModal';
 import ConfirmModal from '@/components/ConfirmModal';
 import RandomPickerModal from '@/components/RandomPickerModal';
-import { SearchIcon, PlusIcon, SparklesIcon, UtensilsIcon } from '@/components/Icons';
+import { SearchIcon } from '@/components/Icons';
 
 const CATEGORIES: ('전체' | RestaurantCategory)[] = [
   '전체',
@@ -30,6 +31,8 @@ const CATEGORIES: ('전체' | RestaurantCategory)[] = [
 export default function Home() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [teamSettings, setTeamSettings] = useState<TeamSettings>(DEFAULT_TEAM_SETTINGS);
+  const [loadError, setLoadError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'전체' | RestaurantCategory>('전체');
   const [sortBy, setSortBy] = useState<'latest' | 'rating' | 'reviews' | 'name'>('rating');
@@ -66,15 +69,28 @@ export default function Home() {
 
   useEffect(() => {
     let ignore = false;
+    async function loadSettings() {
+      try {
+        const response = await fetch('/api/settings', { cache: 'no-store' });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error('설정을 불러오지 못했습니다.');
+        if (!ignore) setTeamSettings(result.data);
+      } catch {
+        if (!ignore) setLoadError('팀 설정을 불러오지 못했습니다. 새로고침 후 다시 확인해주세요.');
+      }
+    }
+    void loadSettings();
     async function init() {
       try {
         const res = await fetch('/api/restaurants');
         const data = await res.json();
+        if (!res.ok || !data.success) throw new Error('식당 목록을 불러오지 못했습니다.');
         if (!ignore && data.success && Array.isArray(data.data)) {
           setRestaurants(data.data);
         }
       } catch (err) {
         console.error('Failed to load restaurants:', err);
+        if (!ignore) setLoadError('식당 목록을 불러오지 못했습니다. 새로고침 후 다시 확인해주세요.');
       } finally {
         if (!ignore) {
           setIsLoading(false);
@@ -124,11 +140,6 @@ export default function Home() {
   // Stats calculation
   const totalReviewsCount = useMemo(() => {
     return restaurants.reduce((sum, r) => sum + r.reviewCount, 0);
-  }, [restaurants]);
-
-  const topRated = useMemo(() => {
-    if (restaurants.length === 0) return null;
-    return [...restaurants].sort((a, b) => b.averageRating - a.averageRating)[0];
   }, [restaurants]);
 
   // Handlers
@@ -225,68 +236,19 @@ export default function Home() {
         onOpenCreateModal={() => setIsCreateModalOpen(true)}
         onOpenRandomModal={() => setIsRandomModalOpen(true)}
         restaurantCount={restaurants.length}
+        teamName={teamSettings.teamName}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Hero Banner */}
-        <section className="mb-8 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 rounded-3xl p-6 sm:p-10 text-white shadow-xl shadow-orange-500/15 relative overflow-hidden">
-          <div className="relative z-10 max-w-2xl">
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md mb-3 text-orange-50">
-              <SparklesIcon className="w-3.5 h-3.5" />
-              점심 고민 해결 솔로몬
-            </span>
-            <h1 className="text-2xl sm:text-4xl font-black tracking-tight mb-3">
-              오늘 점심, 어디서 뭘 먹을까요?
-            </h1>
-            <p className="text-sm sm:text-base text-orange-50 leading-relaxed font-medium">
-              로그인 없이 누구나 자유롭게 새로운 식당을 등록하고 솔직한 별점과 리뷰를 남길 수 있습니다.
-              동료들과 함께 나만의 점심 맛집 리스트를 만들어보세요!
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => setIsCreateModalOpen(true)}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold bg-white text-orange-600 hover:bg-orange-50 transition-colors shadow-md cursor-pointer flex items-center gap-1.5"
-              >
-                <PlusIcon className="w-4 h-4" />
-                식당 등록하기
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsRandomModalOpen(true)}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold bg-orange-600/60 hover:bg-orange-600/80 text-white backdrop-blur-md transition-colors cursor-pointer flex items-center gap-1.5"
-              >
-                <SparklesIcon className="w-4 h-4" />
-                랜덤 추천 뽑기
-              </button>
-            </div>
+        <section className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="mb-2 text-xs font-bold tracking-widest text-orange-700">함께 모으고, 함께 먹어요</p>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">오늘 점심도, 우리 팀 맛집에서</h1>
+            <p className="mt-3 text-sm leading-6 text-slate-500">동료들이 남긴 추천과 리뷰를 보고, 지도에서 오늘 갈 곳을 골라보세요.</p>
           </div>
-
-          {/* Quick Stats Badges inside Hero */}
-          <div className="mt-8 sm:mt-0 sm:absolute sm:right-10 sm:bottom-10 flex gap-4">
-            <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 text-center min-w-[90px]">
-              <div className="text-2xl font-black">{restaurants.length}</div>
-              <div className="text-xs text-orange-100 font-semibold mt-0.5">등록된 식당</div>
-            </div>
-            <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 text-center min-w-[90px]">
-              <div className="text-2xl font-black">{totalReviewsCount}</div>
-              <div className="text-xs text-orange-100 font-semibold mt-0.5">누적 리뷰</div>
-            </div>
-            {topRated && (
-              <div
-                onClick={() => setDetailRestaurantId(topRated.id)}
-                className="bg-white/15 backdrop-blur-md rounded-2xl p-4 text-center min-w-[100px] cursor-pointer hover:bg-white/25 transition-colors hidden md:block"
-                title="최고 평점 식당 보기"
-              >
-                <div className="text-2xl font-black">★ {topRated.averageRating}</div>
-                <div className="text-xs text-orange-100 font-semibold mt-0.5 truncate max-w-[100px]">
-                  {topRated.name}
-                </div>
-              </div>
-            )}
-          </div>
+          <p className="text-xs text-slate-500">함께 모은 식당 <strong className="text-slate-800">{restaurants.length}곳</strong> · 팀 리뷰 <strong className="text-slate-800">{totalReviewsCount}개</strong></p>
         </section>
+        {loadError && <p role="alert" className="mb-5 rounded-xl bg-red-50 p-4 text-sm text-red-700">{loadError}</p>}
 
         {/* Search, Filter & Sort Section */}
         <section className="mb-6 space-y-4">
@@ -366,55 +328,17 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Restaurant Grid Section */}
         {isLoading ? (
-          <div className="py-20 text-center">
-            <div className="inline-block w-8 h-8 border-3 border-orange-500 border-t-transparent rounded-full animate-spin mb-3"></div>
-            <p className="text-sm font-semibold text-slate-500">
-              맛있는 식당 목록을 불러오는 중...
-            </p>
-          </div>
-        ) : filteredRestaurants.length === 0 ? (
-          <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200 p-8 shadow-xs">
-            <div className="w-16 h-16 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center mx-auto mb-4">
-              <UtensilsIcon className="w-8 h-8" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-1">
-              조건에 맞는 식당이 없습니다
-            </h3>
-            <p className="text-sm text-slate-500 mb-6">
-              검색어나 카테고리를 변경하거나, 새로운 맛집을 직접 등록해보세요!
-            </p>
-            <button
-              type="button"
-              onClick={() => setIsCreateModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-bold bg-orange-500 text-white hover:bg-orange-600 transition-colors shadow-md shadow-orange-500/25 cursor-pointer"
-            >
-              <PlusIcon className="w-4 h-4" />
-              새 식당 등록하기
-            </button>
-          </div>
+          <p role="status" className="py-20 text-center text-sm text-slate-500">팀 맛집 목록을 불러오는 중입니다…</p>
         ) : (
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-semibold text-slate-500">
-                총 <span className="text-orange-600 font-bold">{filteredRestaurants.length}</span>곳의
-                식당
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRestaurants.map((restaurant) => (
-                <RestaurantCard
-                  key={restaurant.id}
-                  restaurant={restaurant}
-                  onViewDetails={(r) => setDetailRestaurantId(r.id)}
-                  onEdit={(r) => setEditingRestaurant(r)}
-                  onDelete={(r) => setDeleteConfirmRestaurant(r)}
-                />
-              ))}
-            </div>
-          </div>
+          <RestaurantExplorer
+            restaurants={filteredRestaurants}
+            officeAddress={teamSettings.officeAddress}
+            officePlace={teamSettings.officePlace}
+            onViewDetails={(restaurant) => setDetailRestaurantId(restaurant.id)}
+            onEdit={(restaurant) => setEditingRestaurant(restaurant)}
+            onDelete={(restaurant) => setDeleteConfirmRestaurant(restaurant)}
+          />
         )}
       </main>
 
@@ -423,7 +347,7 @@ export default function Home() {
         <p className="font-semibold text-slate-600 mb-1">
           솔로몬의 점심 메뉴 (Lunch Menu Solomon)
         </p>
-        <p>NextJS · TypeScript · TailwindCSS · 로그인 없이 자유로운 식당 CRUD 및 별점 리뷰</p>
+        <p>동료들의 한 끼가 쌓여, 우리 팀의 맛집 지도가 됩니다.</p>
       </footer>
 
       {/* Create / Edit Restaurant Modal */}

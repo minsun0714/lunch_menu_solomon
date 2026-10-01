@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addReview } from '@/lib/storage';
 import { CreateReviewInput } from '@/types/restaurant';
+import { isValidRating } from '@/types/rating';
 
 export async function POST(
   request: NextRequest,
@@ -18,10 +19,9 @@ export async function POST(
       );
     }
 
-    const numRating = Number(rating);
-    if (isNaN(numRating) || numRating < 1 || numRating > 5) {
+    if (!isValidRating(rating)) {
       return NextResponse.json(
-        { success: false, error: '별점은 1점에서 5점 사이여야 합니다.' },
+        { success: false, error: '별점은 0.5~5점 사이에서 0.5점 단위로 선택해주세요.' },
         { status: 400 }
       );
     }
@@ -35,7 +35,7 @@ export async function POST(
 
     const input: CreateReviewInput = {
       author: author.trim(),
-      rating: Math.round(numRating),
+      rating,
       content: content.trim(),
     };
 

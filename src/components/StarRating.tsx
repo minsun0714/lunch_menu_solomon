@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { StarIcon } from './Icons';
 
 interface StarRatingProps {
@@ -31,6 +31,7 @@ export default function StarRating({
   showLabel = false,
 }: StarRatingProps) {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const groupName = useId();
 
   const activeRating = hoverRating !== null ? hoverRating : rating;
 
@@ -42,41 +43,27 @@ export default function StarRating({
 
   return (
     <div className="inline-flex items-center gap-1.5 flex-wrap">
-      <div className="flex items-center">
+      <div className="flex items-center" role={interactive ? 'radiogroup' : 'img'} aria-label={interactive ? '별점 선택 (0.5점 단위)' : `${rating.toFixed(1)}점 / ${maxRating}점`}>
         {Array.from({ length: maxRating }, (_, i) => {
           const starValue = i + 1;
-          const isFilled = starValue <= activeRating;
-
-          if (interactive) {
-            return (
-              <button
-                type="button"
-                key={starValue}
-                onClick={() => onChange?.(starValue)}
-                onMouseEnter={() => setHoverRating(starValue)}
-                onMouseLeave={() => setHoverRating(null)}
-                className="p-1 focus:outline-none focus:scale-110 transition-transform duration-100 text-amber-400 hover:text-amber-500 cursor-pointer"
-                title={`${starValue}점 선택`}
-                aria-label={`${starValue}점`}
-              >
-                <StarIcon
-                  filled={isFilled}
-                  className={`${sizeClasses[size]} ${
-                    isFilled ? 'text-amber-400 fill-amber-400' : 'text-slate-300'
-                  }`}
-                />
-              </button>
-            );
-          }
+          const fill = Math.max(0, Math.min(1, activeRating - i)) * 100;
 
           return (
-            <span key={starValue} className="p-0.5">
-              <StarIcon
-                filled={isFilled}
-                className={`${sizeClasses[size]} ${
-                  isFilled ? 'text-amber-400 fill-amber-400' : 'text-slate-300'
-                }`}
-              />
+            <span key={starValue} className={`relative inline-flex ${interactive ? 'p-1' : 'p-0.5'}`}>
+              <span className="relative inline-flex" aria-hidden="true">
+                <StarIcon filled className={`${sizeClasses[size]} text-slate-200 fill-slate-200`} />
+                <span className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - fill}% 0 0)` }}>
+                  <StarIcon filled className={`${sizeClasses[size]} text-amber-400 fill-amber-400`} />
+                </span>
+              </span>
+              {interactive && [starValue - 0.5, starValue].map((value, half) => (
+                <input key={value} type="radio" name={groupName} value={value}
+                  aria-label={`${value}점`} title={`${value}점 선택`} checked={rating === value}
+                  onChange={() => onChange?.(value)}
+                  onMouseEnter={() => setHoverRating(value)} onMouseLeave={() => setHoverRating(null)}
+                  onFocus={() => setHoverRating(value)} onBlur={() => setHoverRating(null)}
+                  className={`absolute top-0 h-full w-1/2 appearance-none cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-orange-600 ${half === 0 ? 'left-0' : 'right-0'}`} />
+              ))}
             </span>
           );
         })}

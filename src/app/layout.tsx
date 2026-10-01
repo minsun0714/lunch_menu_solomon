@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "솔로몬의 점심 메뉴 - 맛집 추천 & 자유로운 별점 리뷰",
-  description: "NextJS, TypeScript, TailwindCSS로 만든 식당 CRUD 및 자유로운 별점 리뷰 사이트 (로그인 불필요)",
+  title: "솔로몬 — 우리 팀 맛집 지도",
+  description: "사무실 주변 맛집을 지도에서 찾고, 동료들의 추천과 리뷰로 오늘 점심을 골라보세요.",
 };
 
 export default function RootLayout({

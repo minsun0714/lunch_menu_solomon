@@ -250,14 +250,14 @@ export default function RestaurantDetailModal({
                 {/* Rating selection */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    별점 선택 <span className="text-orange-500">*</span>
+                    별점 선택 · 0.5점 단위 <span className="text-orange-500">*</span>
                   </label>
                   <div className="py-1">
                     <StarRating
                       rating={rating}
                       interactive={true}
                       onChange={(r) => setRating(r)}
-                      size="md"
+                      size="lg"
                       showLabel={true}
                     />
                   </div>

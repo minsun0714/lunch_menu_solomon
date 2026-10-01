@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { installSupabaseMock } from './helpers/supabase';
 import {
   getAllRestaurants,
   getRestaurantById,
@@ -11,14 +12,11 @@ import {
 } from '../lib/storage';
 
 test('Restaurant CRUD and Review operations', async (t) => {
-  await t.test('1. Get all restaurants returns initial seed data', async () => {
+  installSupabaseMock(t);
+  await t.test('1. Empty database returns an empty list without file seeds', async () => {
     const list = await getAllRestaurants();
     assert.ok(Array.isArray(list));
-    assert.ok(list.length > 0);
-    const first = list[0];
-    assert.ok(first.id);
-    assert.ok(first.name);
-    assert.ok(first.category);
+    assert.equal(list.length, 0);
   });
 
   let createdId = '';
@@ -84,16 +82,17 @@ test('Restaurant CRUD and Review operations', async (t) => {
     // Add 3-star review
     const r2 = await addReview(createdId, {
       author: '점심러',
-      rating: 3,
+      rating: 3.5,
       content: '보통이에요. 밥이 조금 질었어요.',
     });
     assert.ok(r2);
+    assert.equal(r2.rating, 3.5);
     review2Id = r2?.id || '';
 
-    // Verify average rating: (5 + 3) / 2 = 4.0
+    // Verify average rating: (5 + 3.5) / 2 = 4.25, displayed to one decimal.
     rest = await getRestaurantById(createdId);
     assert.equal(rest?.reviewCount, 2);
-    assert.equal(rest?.averageRating, 4);
+    assert.equal(rest?.averageRating, 4.3);
     assert.equal(rest?.reviews.length, 2);
   });
 

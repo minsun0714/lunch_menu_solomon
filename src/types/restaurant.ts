@@ -1,3 +1,5 @@
+import { SelectedPlace } from './place';
+
 export const RESTAURANT_CATEGORIES = [
   '한식',
   '일식',
@@ -15,12 +17,13 @@ export interface Review {
   id: string;
   restaurantId: string;
   author: string; // 작성자 이름
-  rating: number; // 별점 (1 ~ 5)
+  rating: number; // 별점 (0.5 ~ 5, 0.5점 단위)
   content: string; // 리뷰 내용
   createdAt: string; // ISO date string
 }
 
 export interface Restaurant {
+  place?: SelectedPlace;
   id: string;
   name: string; // 식당 이름
   category: RestaurantCategory; // 카테고리
@@ -38,6 +41,7 @@ export interface Restaurant {
 }
 
 export interface CreateRestaurantInput {
+  place?: SelectedPlace;
   name: string;
   category: RestaurantCategory;
   address: string;
@@ -49,6 +53,7 @@ export interface CreateRestaurantInput {
 }
 
 export interface UpdateRestaurantInput {
+  place?: SelectedPlace;
   name?: string;
   category?: RestaurantCategory;
   address?: string;
