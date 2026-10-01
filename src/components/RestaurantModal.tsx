@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { Restaurant, RestaurantCategory, CreateRestaurantInput } from '@/types/restaurant';
 import { CloseIcon } from './Icons';
+import AddressSearch from './AddressSearch';
+import { PlaceSearchResult, SelectedPlace } from '@/types/place';
 
 interface RestaurantModalProps {
   isOpen: boolean;
@@ -49,9 +51,24 @@ function RestaurantModalForm({
   const [openingHours, setOpeningHours] = useState(initialData?.openingHours || '');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [query, setQuery] = useState('');
+  const [place, setPlace] = useState<SelectedPlace | undefined>(initialData?.place);
+
+  function selectRestaurant(result: PlaceSearchResult) {
+    setPlace({ id: result.id, name: result.name, address: result.address, lat: result.lat, lng: result.lng });
+    setName(result.name);
+    setAddress(result.address);
+    setPhone(result.phone);
+    const categories = result.category.split(' > ');
+    setCategory(CATEGORIES.find((item) => categories.includes(item))
+      || (categories.some((item) => /카페|디저트|제과/.test(item)) ? '카페/디저트' : '기타'));
+    setDescription(result.category || result.name);
+    setErrors({});
+  }
 
   const validate = () => {
     const errs: { [key: string]: string } = {};
+    if (!initialData && !place) errs.place = '검색 결과에서 등록할 식당을 선택해주세요.';
     if (!name.trim()) errs.name = '식당 이름을 입력해주세요.';
     if (!address.trim()) errs.address = '식당 위치나 주소를 입력해주세요.';
     if (!description.trim()) errs.description = '대표 메뉴나 설명을 입력해주세요.';
@@ -61,11 +78,13 @@ function RestaurantModalForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     if (!validate()) return;
 
     setIsSubmitting(true);
     try {
       await onSubmit({
+        ...(place && place.address === address.trim() ? { place } : {}),
         name: name.trim(),
         category,
         address: address.trim(),
@@ -109,7 +128,20 @@ function RestaurantModalForm({
             </div>
           )}
 
+          <fieldset disabled={isSubmitting} className="space-y-4 disabled:opacity-50">
+          {!initialData && <div>
+            <label htmlFor="restaurant-search" className="block text-sm font-semibold text-slate-700">카카오맵에서 식당 검색</label>
+            <AddressSearch id="restaurant-search" purpose="restaurant" value={query} onChange={setQuery} selectedPlaceId={place?.id} onSelect={selectRestaurant} />
+            {errors.place && <p role="alert" className="mt-2 text-sm text-red-600">{errors.place}</p>}
+            {place && <div className="mt-3 rounded-xl border border-orange-200 bg-orange-50 p-4">
+              <p className="text-sm font-semibold text-slate-900">선택한 식당: {place.name}</p>
+              <p className="mt-1 text-xs text-slate-600">{place.address}</p>
+              <p className="mt-2 text-xs text-orange-700">아래 식당 등록하기를 눌러야 팀 목록에 추가됩니다.</p>
+            </div>}
+          </div>}
+
           {/* Name & Category */}
+          {(initialData || place) && <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -118,6 +150,7 @@ function RestaurantModalForm({
               <input
                 type="text"
                 value={name}
+                readOnly={!initialData}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="예: 솔로몬 묵은지 김치찌개"
                 className={`w-full px-3.5 py-2 rounded-xl border text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all ${
@@ -155,6 +188,7 @@ function RestaurantModalForm({
             <input
               type="text"
               value={address}
+              readOnly={!initialData}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="예: 서울시 강남구 테헤란로 12길 15"
               className={`w-full px-3.5 py-2 rounded-xl border text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all ${
@@ -248,6 +282,7 @@ function RestaurantModalForm({
           </div>
 
           {/* Footer Actions */}
+          </>}
           <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
             <button
               type="button"
@@ -259,12 +294,13 @@ function RestaurantModalForm({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || (!initialData && !place)}
               className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-orange-500 text-white hover:bg-orange-600 transition-colors shadow-md shadow-orange-500/20 disabled:opacity-50 cursor-pointer"
             >
               {isSubmitting ? '저장 중...' : initialData ? '수정 완료' : '식당 등록하기'}
             </button>
           </div>
+          </fieldset>
         </form>
       </div>
     </div>

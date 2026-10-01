@@ -1,0 +1,11 @@
+npm install @supabase/supabase-js`
+
+npm install eslint@latest --save-dev
+codex
+npm i
+npm run dev
+npm i
+npm run dev
+git stash
+git checkout -b feat/mvp
+git stash pop

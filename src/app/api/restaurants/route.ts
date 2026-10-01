@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllRestaurants, createRestaurant } from '@/lib/storage';
 import { CreateRestaurantInput, RestaurantCategory, RESTAURANT_CATEGORIES } from '@/types/restaurant';
+import { parseSelectedPlace, SelectedPlace } from '@/types/place';
 
 export async function GET(request: NextRequest) {
   try {
@@ -81,7 +82,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    let place: SelectedPlace | undefined;
+    if (body.place !== undefined) {
+      try {
+        place = parseSelectedPlace(body.place);
+        if (place.address !== address.trim()) throw new Error('선택한 식당의 주소가 일치하지 않습니다.');
+      } catch (error) {
+        return NextResponse.json({ success: false, error: (error as Error).message }, { status: 400 });
+      }
+    }
+
     const input: CreateRestaurantInput = {
+      ...(place ? { place } : {}),
       name: name.trim(),
       category: category as RestaurantCategory,
       address: address.trim(),

@@ -1,5 +1,26 @@
 [
   {
+    "place": {
+      "id": "26505483",
+      "name": "리틀인디아",
+      "address": "서울 강남구 압구정로10길 43",
+      "lat": 37.5207775485808,
+      "lng": 127.022311980575
+    },
+    "id": "rest-1790835314795-1t5yp",
+    "name": "리틀인디아",
+    "category": "아시안",
+    "address": "서울 강남구 압구정로10길 43",
+    "phone": "02-511-1997",
+    "description": "음식점 > 아시아음식 > 인도음식",
+    "priceRange": "1만~1.5만원",
+    "reviews": [],
+    "averageRating": 0,
+    "reviewCount": 0,
+    "createdAt": "2026-10-01T06:15:14.795Z",
+    "updatedAt": "2026-10-01T06:24:39.387Z"
+  },
+  {
     "id": "rest-1",
     "name": "솔로몬 묵은지 김치찌개",
     "category": "한식",
